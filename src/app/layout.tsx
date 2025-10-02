@@ -1,7 +1,10 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar"; // 👈 Asegúrate de tener este archivo creado
+import { SessionProvider } from "next-auth/react";
+import Sidebar from "@/components/Sidebar"; // tu sidebar
+import Header from "@/components/Header";   // opcional: header con avatar
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,19 +23,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}>
-        {/* ✅ Sidebar fijo */}
-        <Sidebar />
+        {/* SessionProvider envuelve todo para que usemos NextAuth */}
+        <SessionProvider>
+          {/* Sidebar fijo a la izquierda */}
+          <Sidebar />
 
-        {/* ✅ Contenido principal */}
-        <main className="flex-1 bg-gray-100 min-h-screen p-6">
-          {children}
-        </main>
+          {/* Contenedor principal */}
+          <div className="flex-1 flex flex-col min-h-screen">
+            {/* Header opcional arriba */}
+            <Header />
+
+            {/* Main content */}
+            <main className="flex-1 bg-gray-100 p-6">{children}</main>
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );

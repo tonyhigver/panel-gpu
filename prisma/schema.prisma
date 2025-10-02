@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// MODELS
+// ==========================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  image         String?
+  emailVerified DateTime?
+  isAdmin       Boolean   @default(false)
+  hasPaid       Boolean   @default(false)
+  planId        String?
+  servers       Server[]
+  createdAt     DateTime  @default(now())
+}
+
+// Cada servidor creado para un usuario
+model Server {
+  id        String   @id @default(cuid())
+  userId    String
+  hetznerId String?   // ID que devuelve la API de Hetzner
+  ip        String?
+  planId    String
+  state     String    // Ej: "creating", "running", "stopped", "error"
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+}
