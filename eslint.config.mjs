@@ -20,6 +20,14 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    // 👈 Override para ignorar reglas en los archivos generados por Prisma
+    files: ["src/generated/prisma/**/*.ts", "src/generated/prisma/**/*.js"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

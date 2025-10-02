@@ -1,5 +1,6 @@
 "use client";
 import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -13,7 +14,13 @@ export default function Header() {
         ) : (
           <>
             <div className="text-sm">{session.user?.email}</div>
-            <img src={session.user?.image || ""} alt="avatar" className="w-10 h-10 rounded-full"/>
+            <Image
+              src={session.user?.image || "/default.png"} // Pon una imagen por defecto en public/default.png
+              alt="avatar"
+              width={40}   // ancho en px
+              height={40}  // alto en px
+              className="rounded-full"
+            />
             <button onClick={() => signOut()} className="ml-2">Salir</button>
           </>
         )}
