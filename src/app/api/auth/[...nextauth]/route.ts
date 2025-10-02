@@ -2,8 +2,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@/lib/prisma"; // ✅ Import default
-import type { Session, User } from "next-auth"; // usamos los tipos extendidos del next-auth.d.ts
+import prisma from "@/lib/prisma"; // ✅ Usamos default export
+import type { Session, User } from "next-auth"; // Tipos extendidos
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -19,7 +19,7 @@ export const authOptions = {
       if (session.user) {
         session.user.id = user.id;
         session.user.isAdmin = user.isAdmin;
-        session.user.hasPaid = user.hasPaid;
+        session.user.hasPaid = user.hasPaid; // ✅ Ahora existe en Prisma
       }
       return session;
     },
@@ -30,7 +30,7 @@ export const authOptions = {
       if (process.env.ADMIN_EMAIL && user.email === process.env.ADMIN_EMAIL) {
         await prisma.user.update({
           where: { id: user.id },
-          data: { isAdmin: true, hasPaid: true },
+          data: { isAdmin: true, hasPaid: true }, // ✅ Campo agregado
         });
       }
       return true;
