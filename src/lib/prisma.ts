@@ -8,7 +8,7 @@ declare global {
 }
 
 // Creamos la instancia de Prisma, logueando solo en desarrollo
-export const prisma =
+const prisma =
   global.prisma ?? new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : [],
   });
@@ -17,3 +17,5 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
+
+export default prisma; // ✅ Export default para que funcione el import en tus route.ts
