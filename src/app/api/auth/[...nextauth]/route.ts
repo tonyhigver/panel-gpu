@@ -2,7 +2,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@/lib/prisma"; // <-- named export ahora
+import prisma from "@/lib/prisma"; // ✅ Import default
 import type { Session, User } from "next-auth"; // usamos los tipos extendidos del next-auth.d.ts
 
 export const authOptions = {
