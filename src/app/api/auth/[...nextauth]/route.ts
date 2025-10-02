@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
+import type { Session, User } from "next-auth"; // usamos los tipos extendidos del next-auth.d.ts
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -13,8 +14,8 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
-      // Añadimos flags útiles a session (id, isAdmin, hasPaid)
+    // Callback session tipado
+    async session({ session, user }: { session: Session; user: User }) {
       if (session.user) {
         session.user.id = user.id;
         session.user.isAdmin = user.isAdmin;
@@ -22,7 +23,9 @@ export const authOptions = {
       }
       return session;
     },
-    async signIn({ user }) {
+
+    // Callback signIn tipado
+    async signIn({ user }: { user: User }) {
       // Si el email coincide con ADMIN_EMAIL, marcar como admin y con pago
       if (process.env.ADMIN_EMAIL && user.email === process.env.ADMIN_EMAIL) {
         await prisma.user.update({

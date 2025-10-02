@@ -1,3 +1,4 @@
+// src/types/next-auth.d.ts
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -6,7 +7,7 @@ declare module "next-auth" {
       id: string;
       isAdmin: boolean;
       hasPaid: boolean;
-    } & DefaultSession["user"];
+    } & DefaultSession["user"]; // mantiene name, email, image
   }
 
   interface User {
