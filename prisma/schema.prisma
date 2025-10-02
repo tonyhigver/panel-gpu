@@ -1,42 +1,39 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-// ==========================================
-// MODELS
-// ==========================================
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  image         String?
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  image        String?
   emailVerified DateTime?
-  isAdmin       Boolean   @default(false)
-  hasPaid       Boolean   @default(false)
-  planId        String?
-  servers       Server[]
-  createdAt     DateTime  @default(now())
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  servers      Server[] // relación con Server
 }
 
-// Cada servidor creado para un usuario
+model Plan {
+  id       String @id @default(cuid())
+  name     String
+  price    Int
+  cpu      String
+  ram      String
+  gpu      String
+  servers  Server[] // relación con Server
+}
+
 model Server {
   id        String   @id @default(cuid())
   userId    String
-  hetznerId String?   // ID que devuelve la API de Hetzner
-  ip        String?
   planId    String
-  state     String    // Ej: "creating", "running", "stopped", "error"
-  createdAt DateTime  @default(now())
-
-  user      User      @relation(fields: [userId], references: [id])
+  state     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  plan      Plan     @relation(fields: [planId], references: [id])
 }

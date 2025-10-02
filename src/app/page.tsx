@@ -1,45 +1,65 @@
-export default function Home() {
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+type Plan = {
+  id: string;
+  title: string;
+  cpu: string;
+  ram: string;
+  gpu: string;
+  price: number;
+};
+
+export default function PlanesPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  // Redirigir al login si no hay sesión
+  useEffect(() => {
+    if (!session) router.push("/");
+  }, [session, router]);
+
+  // Ejemplo de planes estáticos
+  const [planes, setPlanes] = useState<Plan[]>([
+    { id: "cx32-rtx3080", title: "CX32 + RTX 3080", cpu: "8 vCPU", ram: "32GB", gpu: "RTX 3080", price: 50 },
+    { id: "cx42-rtx4080", title: "CX42 + RTX 4080", cpu: "16 vCPU", ram: "64GB", gpu: "RTX 4080", price: 99 },
+    { id: "cx64-rtx4090", title: "CX64 + RTX 4090", cpu: "32 vCPU", ram: "128GB", gpu: "RTX 4090", price: 199 },
+  ]);
+
   return (
     <div className="flex flex-col gap-6">
-      
-      {/* Título */}
-      <h1 className="text-2xl font-bold">📊 Dashboard del Servidor</h1>
+      <h1 className="text-2xl font-bold">🖥️ Catálogo de Planes</h1>
       <p className="text-gray-600">
-        Aquí verás un resumen del estado de tu servidor Hetzner + GPU dinámica.
+        Elige el plan de servidor que mejor se adapte a tus necesidades.
       </p>
 
-      {/* Tarjetas de estado */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="text-sm text-gray-500">CPU Usage</h2>
-          <p className="text-xl font-bold">-- %</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="text-sm text-gray-500">RAM Usage</h2>
-          <p className="text-xl font-bold">-- GB</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="text-sm text-gray-500">GPU Estado</h2>
-          <p className="text-xl font-bold">🟡 En espera</p>
-        </div>
+      {/* Grid de planes */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {planes.map((plan) => (
+          <div key={plan.id} className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
+            <div>
+              <h2 className="text-lg font-semibold mb-2">{plan.title}</h2>
+              <ul className="text-gray-600 text-sm space-y-1">
+                <li>CPU: {plan.cpu}</li>
+                <li>RAM: {plan.ram}</li>
+                <li>GPU: {plan.gpu}</li>
+              </ul>
+            </div>
+            <div className="mt-4 flex flex-col gap-2">
+              <span className="text-xl font-bold">${plan.price}</span>
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+                onClick={() => alert(`Seleccionaste el plan ${plan.title}`)}
+              >
+                Elegir Plan
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-
-      {/* Acciones rápidas */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="text-lg font-semibold mb-3">⚡ Acciones rápidas</h2>
-        <div className="flex gap-4 flex-wrap">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-            Encender GPU
-          </button>
-          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-            Reiniciar servidor
-          </button>
-          <button className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded">
-            Abrir terminal
-          </button>
-        </div>
-      </div>
-
     </div>
   );
 }

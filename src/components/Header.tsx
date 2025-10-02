@@ -1,4 +1,5 @@
 "use client";
+
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 
@@ -7,21 +8,39 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow">
-      <div className="font-bold">GPU SaaS</div>
+      {/* Logo / nombre de la app */}
+      <div className="font-bold text-lg">GPU SaaS</div>
+
+      {/* Área de sesión */}
       <div className="flex items-center gap-4">
         {!session ? (
-          <button onClick={() => signIn("google")} className="btn">Iniciar con Google</button>
+          <button
+            onClick={() => signIn("google")}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          >
+            Iniciar con Google
+          </button>
         ) : (
           <>
+            {/* Email del usuario */}
             <div className="text-sm">{session.user?.email}</div>
+
+            {/* Avatar */}
             <Image
-              src={session.user?.image || "/default.png"} // Pon una imagen por defecto en public/default.png
+              src={session.user?.image || "/default.png"} // Asegúrate de tener public/default.png
               alt="avatar"
-              width={40}   // ancho en px
-              height={40}  // alto en px
+              width={40}
+              height={40}
               className="rounded-full"
             />
-            <button onClick={() => signOut()} className="ml-2">Salir</button>
+
+            {/* Botón de logout */}
+            <button
+              onClick={() => signOut()}
+              className="px-3 py-1 border rounded hover:bg-gray-100 transition"
+            >
+              Salir
+            </button>
           </>
         )}
       </div>
