@@ -2,7 +2,9 @@ import NextAuth, { Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
+
+// Importa el tipo de usuario generado por Prisma de esta forma:
+type PrismaUser = Awaited<ReturnType<typeof prisma.user.findUnique>>;
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -13,16 +15,16 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }: { session: Session; user: User }) {
+    async session({ session, user }: { session: Session; user: any }) {
       // añadimos flags útiles a session
       if (session.user) {
-        session.user.id = user.id;
-        session.user.isAdmin = user.isAdmin;
-        session.user.hasPaid = user.hasPaid;
+        session.user.id = (user as any).id;
+        session.user.isAdmin = (user as any).isAdmin;
+        session.user.hasPaid = (user as any).hasPaid;
       }
       return session;
     },
-    async signIn({ user }: { user: User }) {
+    async signIn({ user }: { user: any }) {
       // si el email coincide con ADMIN_EMAIL, marca como admin y pago
       if (process.env.ADMIN_EMAIL && user.email === process.env.ADMIN_EMAIL) {
         await prisma.user.update({
